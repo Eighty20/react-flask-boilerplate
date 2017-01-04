@@ -22,7 +22,7 @@ export const addParentNode = (id, parentId) => ({
     parentId
 })
 
-export const addChildNodeAfterSibling = (id, childId, siblingId) => ({
+export const addChildNodeBeforeSibling = (id, childId, siblingId) => ({
     type: 'ADD_CHILD_NODE_AFTER_SIBLING',
     id,
     childId,
@@ -56,4 +56,9 @@ export const selectNode = (id, multiSelect) => ({
 export const collapseNode = (id) => ({
     type: 'COLLAPSE_NODE',
     id
+})
+
+export const applySearchFilter = (filter) => ({
+    type: 'APPLY_SEARCH_FILTER',
+    filter
 })

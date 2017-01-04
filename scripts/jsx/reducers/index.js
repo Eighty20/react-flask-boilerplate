@@ -50,16 +50,29 @@ const editMode = (state=false, action) => {
     }
 }
 
+const searchFilter = (state="", action) => {
+    switch (action.type) {
+        case 'APPLY_SEARCH_FILTER':
+            return action.filter
+            break
+        default:
+            return state
+    }
+}
+
 const treePlayground = combineReducers({
     nodes,
     selectedNodes,
-    editMode
+    editMode,
+    searchFilter
 })
 
 export const rootNode = {
     id: 'Root',
     displayName: 'Root',
-    childIds: []
+    childIds: [],
+    parentId: 'Root',
+    collapsed: false
 }
 
 export default treePlayground

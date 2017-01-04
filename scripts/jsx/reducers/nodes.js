@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { filter, slice, indexOf } from 'lodash'
+import { filter, slice, indexOf, pickBy } from 'lodash'
 
 const id = (state=0, action) => {
     if (action.type === 'CREATE_NODE'){
@@ -82,10 +82,7 @@ const nodes = (state={}, action) => {
     else {
         switch (action.type) {
             case 'DELETE_NODE':
-                return {
-                    ...state,
-                    [id]: undefined
-                }
+                return pickBy(state, (node) => (node.id !== id))
                 break
             default:
                 return {

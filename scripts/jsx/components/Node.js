@@ -3,7 +3,7 @@ import { Label, Button, Glyphicon, Badge } from 'react-bootstrap'
 import { connect } from 'react-redux'
 import * as actions from '../actions'
 import EditTextInput from './EditTextInput'
-import { each, flow } from 'lodash'
+import { each, flow, pick } from 'lodash'
 import { DragSource } from 'react-dnd'
 import { dndTypes } from '../constants'
 
@@ -58,20 +58,20 @@ class Node extends Component {
         })
     }
 
-    handleAppendSelectedBelow() {
-        const { id, parentId, selectedNodes, nodes, removeChildNode, addChildNodeAfterSibling, addParentNode } = this.props
+    handleAppendSelectedAbove() {
+        const { id, parentId, selectedNodes, nodes, removeChildNode, addChildNodeBeforeSibling, addParentNode } = this.props
         each(selectedNodes, (selectedNodeId) => {
             const selectedNode = nodes[selectedNodeId]
             const selectedParentId = selectedNode.parentId
             removeChildNode(selectedParentId, selectedNodeId)
-            addChildNodeAfterSibling(parentId, selectedNodeId, id)
+            addChildNodeBeforeSibling(parentId, selectedNodeId, id)
             addParentNode(selectedNodeId, parentId)
         })
 
     }
 
     render() {
-        const { nodes, id, selected, editable, targetable, childable, ancestorSelected } = this.props
+        const { nodes, id, selected, editable, targetable, childable, ancestorSelected, visibleNodes } = this.props
         const { displayName, childIds, collapsed } = nodes[id]
         const { connectDragSource, connectDragPreview } = this.props
         return connectDragPreview(
@@ -111,7 +111,7 @@ class Node extends Component {
                                 {" "}
                                 <Label onClick={() => this.handleAppendSelectedAsChildren()}><Glyphicon glyph='arrow-down'/></Label>
                                 {" "}
-                                <Label onClick={() => this.handleAppendSelectedBelow()}><Glyphicon glyph='arrow-right'/></Label>
+                                <Label onClick={() => this.handleAppendSelectedAbove()}><Glyphicon glyph='share-alt'/></Label>
                             </span>
                         )}
                     </h4>
@@ -119,8 +119,9 @@ class Node extends Component {
                 { (childIds.length > 0 && !collapsed) &&
                     <ul>
                         { childIds.map((childId) => (
+                            visibleNodes.includes(childId) &&
                             <div key={childId}>
-                                <ConnectedNode id={childId} parentId={id} ancestorSelected={selected || ancestorSelected}/>
+                                <ConnectedNode id={childId} parentId={id} ancestorSelected={selected || ancestorSelected} visibleNodes={visibleNodes}/>
                             </div>
                         )) }
                     </ul>
@@ -131,10 +132,34 @@ class Node extends Component {
 
 }
 
-const mapStateToProps = ({ nodes, selectedNodes, editMode }, ownProps) => {
+const mapStateToProps = ({ nodes, selectedNodes, editMode, searchFilter }, ownProps) => {
     const selected = selectedNodes.includes(ownProps.id)
+    let visibleNodes = ownProps.visibleNodes
+    const makeParentVisible = (nodes, id, visibleNodes) => {
+        const node = nodes[id]
+        const parentId = node.parentId
+        if (visibleNodes.includes(parentId)) {
+            return visibleNodes
+        }
+        else {
+            return [
+                ...makeParentVisible(nodes, parentId, visibleNodes),
+                parentId
+            ]
+        }
+    }
+    if (typeof visibleNodes === 'undefined') {
+        visibleNodes = Object.keys(nodes).filter((nodeId) => (
+            nodeId === 'Root' ||
+            nodes[nodeId].displayName.toLowerCase().includes(searchFilter.toLowerCase())
+        ))
+        each(visibleNodes, (nodeId) => {
+            visibleNodes = makeParentVisible(nodes, nodeId, visibleNodes)
+        })
+    }
     return {
         nodes,
+        visibleNodes,
         selected,
         editable: (selected && editMode),
         targetable: ((selectedNodes.length > 0) && !selected && !editMode && !ownProps.ancestorSelected),
