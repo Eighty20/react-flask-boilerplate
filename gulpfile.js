@@ -10,13 +10,13 @@ var assign = require('lodash.assign');
 
 // add custom browserify options here
 var customOpts = {
-  entries: ['./static/scripts/jsx/index.js'],
+  entries: ['./scripts/jsx/index.js'],
   debug: true
 };
 var opts = assign({}, watchify.args, customOpts);
 var b = watchify(browserify(opts));
 
-b.transform('reactify')
+b.transform('babelify', {presets: ["es2015", "react"]})
 // add transformations here
 // i.e. b.transform(coffeeify);
 
