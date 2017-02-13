@@ -115,7 +115,7 @@ Boilerplate for setting up new React Projects running on a simple Flask webserve
 
 1. Install the required python packages
 
-        conda create -n test-env --file req.txt
+        conda install --yes --file req.txt
 
 1. Install the required node modules
 
