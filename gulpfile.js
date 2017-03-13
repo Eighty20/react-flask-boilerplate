@@ -17,7 +17,7 @@ var opts = assign({}, watchify.args, customOpts);
 var b = watchify(browserify(opts));
 
 b.transform('babelify', {presets: ["es2015", "react"],
-    plugins: ["transform-object-rest-spread"]
+    plugins: ["transform-object-rest-spread", "transform-class-properties"]
 })
 // add transformations here
 // i.e. b.transform(coffeeify);
