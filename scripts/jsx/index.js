@@ -4,8 +4,8 @@ import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 
 import App from './components/App'
-//import DropDownMenuList from './components/drop_down_menu_list'
-import DropDownMenu from './components/drop_down_menu'
+import DropDownMenuList from './components/drop_down_menu_list'
+
 import reducer from './reducers'
 
 const store = createStore(reducer,
@@ -14,7 +14,7 @@ const store = createStore(reducer,
 
 ReactDOM.render(
     <Provider store={store}>
-        <DropDownMenu num = "1" />
+        <DropDownMenuList />
     </Provider>,
     document.getElementById('root')
 )

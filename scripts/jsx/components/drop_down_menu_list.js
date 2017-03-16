@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
-import DropDownMenu from './components/drop_down_menu'
+import { Form, ControlLabel, FormControl, FormGroup, Grid } from 'react-bootstrap';
+import DropDownMenu from './drop_down_menu';
 
 class DropDownMenuList extends Component {
 
   render() {
     return (
-      <div>
-          <DropDownMenu num = 1 />
-          <DropDownMenu num = 2 />
-          <DropDownMenu num = 3 />
-          <DropDownMenu num = 4 />
-      </div>
+      <Grid>
+        <Form horizontal>
+          <DropDownMenu label="What market are you talking to?" />
+          <DropDownMenu label="What type of product are you promoting?" />
+          <DropDownMenu label="What region are you looking at?" />
+          <DropDownMenu label="What are your objectives?" />
+        </Form>
+      </Grid>
+
     );
   }
 }
